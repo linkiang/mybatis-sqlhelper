@@ -79,6 +79,8 @@ public class CourseServiceTest
 		List<String> tutorIds = new ArrayList<String>();
 //		tutorIds.add("11");
 		map.put("tutorIds", tutorIds);
+		//map.put("aa", "hello");
+		
 		sql = SqlHelper.getNamespaceSql1(sessionFactory.getConfiguration(), "com.lq.test.ch3.mapper.CourseMapper.searchCoursesByTutors", map);
 		System.out.println(sql);
 		

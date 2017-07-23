@@ -35,7 +35,7 @@
   	</select>
   	
   	<select id="searchCoursesByTutors" parameterType="hashmap" resultMap="CourseResult">
-  		SELECT * FROM COURSES
+  		SELECT * FROM COURSES ${aa}
   		<if test="tutorIds != null and tutorIds.size > 0">
   		<where>
   		tutor_id IN

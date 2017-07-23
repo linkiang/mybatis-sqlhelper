@@ -1,7 +1,9 @@
 package com.lq.test.ch3.util;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.defaults.DefaultSqlSession.StrictMap;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
@@ -322,7 +325,7 @@ System.out.println("/////");
 	 * @return
 	 * 
 	 */
-	private static Object wrapCollection(final Object object) {
+	private static Object wrapCollection1(final Object object) {
 		if (object instanceof List) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", object);
@@ -335,7 +338,27 @@ System.out.println("/////");
 		return object;
 	}
 	
-	
+	  //把参数包装成Collection
+	  private static Object wrapCollection(final Object object) {
+	    if (object instanceof Collection) {
+	      //参数若是Collection型，做collection标记
+	      StrictMap<Object> map = new StrictMap<Object>();
+	      map.put("collection", object);
+	      if (object instanceof List) {
+	        //参数若是List型，做list标记
+	        map.put("list", object);
+	      }
+	      return map;      
+	    } else if (object != null && object.getClass().isArray()) {
+	      //参数若是数组型，，做array标记
+	      StrictMap<Object> map = new StrictMap<Object>();
+	      map.put("array", object);
+	      return map;
+	    }
+	    //参数若不是集合型，直接返回原来值
+	    return object;
+	  }
+	  
 	public static String getNamespaceSql1(Configuration configuration, String namespace, Object params) {
 		params = wrapCollection(params);
 //		Configuration configuration = session.getConfiguration();
@@ -371,6 +394,8 @@ System.out.println("/////");
 				}
 			}
 		}
+		Object[] array =  new Object[ values.size()];
+		values.toArray(array);
 		System.out.println(JSON.toJSON(values).toString());
 		return sql;
 	}
